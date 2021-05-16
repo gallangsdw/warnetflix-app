@@ -1,12 +1,13 @@
 package com.sdwtech.warnetflix.ui.detail
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.sdwtech.warnetflix.data.Entity
-import com.sdwtech.warnetflix.utils.DataDummy
+import com.sdwtech.warnetflix.data.WarnetflixRepository
+import com.sdwtech.warnetflix.data.source.local.entity.Entity
 
-class DetailViewModel: ViewModel() {
-    private lateinit var movieId: String
-    private lateinit var tvShowId: String
+class DetailViewModel(private val warnetflixRepository: WarnetflixRepository): ViewModel() {
+    lateinit var movieId: String
+    lateinit var tvShowId: String
 
     fun setSelectedMovie(movieId: String) {
         this.movieId = movieId
@@ -16,25 +17,7 @@ class DetailViewModel: ViewModel() {
         this.tvShowId = tvShowId
     }
 
-    fun getMovie(): Entity {
-        lateinit var movie: Entity
-        val listMovies = DataDummy.generateDummyMovie()
-        for (listMovie in listMovies) {
-            if (listMovie.Id == movieId) {
-                movie = listMovie
-            }
-        }
-        return movie
-    }
+    fun getMovieDetail(): LiveData<Entity> = warnetflixRepository.getDetailMovie(movieId)
 
-    fun getTvShow(): Entity {
-        lateinit var tvShow: Entity
-        val listTvShows = DataDummy.generateDummyTvShow()
-        for (listTvShow in listTvShows) {
-            if (listTvShow.Id == tvShowId) {
-                tvShow = listTvShow
-            }
-        }
-        return tvShow
-    }
+    fun getTvShowDetail(): LiveData<Entity> = warnetflixRepository.getDetailTvShow(tvShowId)
 }

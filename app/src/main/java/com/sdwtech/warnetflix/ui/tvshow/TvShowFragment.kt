@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sdwtech.warnetflix.databinding.FragmentTvShowBinding
+import com.sdwtech.warnetflix.viewmodel.ViewModelFactory
 
 
 class TvShowFragment : Fragment() {
@@ -26,11 +27,17 @@ class TvShowFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (activity != null) {
-            val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[TvShowViewModel::class.java]
-            val tvShows = viewModel.getTvShows()
+            val factory = ViewModelFactory.getInstance(requireActivity())
+            val viewModel = ViewModelProvider(this, factory)[TvShowViewModel::class.java]
 
             val tvShowAdapter = TvShowAdapter()
-            tvShowAdapter.setTvShows(tvShows)
+
+            fragmentTvShowBinding.progressBar.visibility = View.VISIBLE
+            viewModel.getTvShows().observe(viewLifecycleOwner, { tvShows ->
+                fragmentTvShowBinding.progressBar.visibility = View.GONE
+                tvShowAdapter.setTvShows(tvShows)
+                tvShowAdapter.notifyDataSetChanged()
+            })
             with(fragmentTvShowBinding.rvTvShow) {
                 layoutManager = LinearLayoutManager(context)
                 setHasFixedSize(true)

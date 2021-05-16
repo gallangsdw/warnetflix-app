@@ -5,8 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.sdwtech.warnetflix.data.Entity
+import com.sdwtech.warnetflix.data.source.local.entity.Entity
 import com.sdwtech.warnetflix.databinding.ActivityDetailBinding
+import com.sdwtech.warnetflix.viewmodel.ViewModelFactory
 
 class DetailActivity : AppCompatActivity() {
 
@@ -29,7 +30,8 @@ class DetailActivity : AppCompatActivity() {
             finish()
         }
 
-        val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[DetailViewModel::class.java]
+        val factory = ViewModelFactory.getInstance(this)
+        val viewModel = ViewModelProvider(this, factory)[DetailViewModel::class.java]
 
         val extras = intent.extras
         if (extras != null) {
@@ -38,21 +40,25 @@ class DetailActivity : AppCompatActivity() {
 
             if (movieId != null) {
                 viewModel.setSelectedMovie(movieId)
-                populate(viewModel.getMovie())
+                viewModel.getMovieDetail().observe(this, { movie ->
+                    populate(movie)
+                })
             } else if (tvShowId != null) {
-                viewModel.setSelectedTvShow(tvShowId)
-                populate(viewModel.getTvShow())
+                viewModel.getTvShowDetail().observe(this,{tvShow ->
+                    populate(tvShow)
+                })
             }
         }
     }
 
     private fun populate(entity: Entity) {
+        val imageUrl = "https://www.themoviedb.org/t/p/w600_and_h900_bestv2"
         detailBinding.tvDetailTitle.text = entity.title
         detailBinding.tvDesc.text = entity.description
-        detailBinding.tvRating.text = entity.rating
+        detailBinding.tvRating.text = entity.rating.toString()
 
         Glide.with(this)
-            .load(entity.imgTrailer)
+            .load(imageUrl + entity.imgTrailer)
             .transform(RoundedCorners(15))
             .into(detailBinding.imgTrailer)
     }

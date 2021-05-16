@@ -4,6 +4,9 @@ plugins {
     id 'kotlin-parcelize'
 }
 
+def MOVIEDB_API = '"' + ApiKey + '"' ?: '"Api key not found"'
+def STRING = 'String'
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -16,6 +19,10 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        each{type ->
+            type.buildConfigField STRING, 'MOVIEDB_API', MOVIEDB_API
+        }
     }
 
     buildTypes {
@@ -52,6 +59,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
     //testing
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "junit:junit:$junitVersion"
@@ -60,4 +68,9 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$androidTestVersion"
     androidTestImplementation "androidx.test:rules:$androidTestVersion"
     androidTestImplementation "androidx.test.ext:junit:$junitExtversion"
+
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
 }

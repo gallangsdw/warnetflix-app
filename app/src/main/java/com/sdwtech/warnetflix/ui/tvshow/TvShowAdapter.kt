@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.sdwtech.warnetflix.data.Entity
+import com.sdwtech.warnetflix.data.source.local.entity.Entity
 import com.sdwtech.warnetflix.databinding.ItemsMovieBinding
 import com.sdwtech.warnetflix.ui.detail.DetailActivity
 
@@ -32,18 +32,19 @@ class TvShowAdapter: RecyclerView.Adapter<TvShowAdapter.TvShowViewHolder>() {
     override fun getItemCount(): Int = listTvShows.size
 
     class TvShowViewHolder(private val binding: ItemsMovieBinding): RecyclerView.ViewHolder(binding.root) {
+        private val imageUrl = "https://www.themoviedb.org/t/p/w600_and_h900_bestv2"
         fun bind(tvShow: Entity) {
             with(binding) {
                 tvTitle.text = tvShow.title
                 tvDate.text = tvShow.showDate
-                tvRating.text = tvShow.rating
+                tvRating.text = tvShow.rating.toString()
                 itemView.setOnClickListener {
                     val intent = Intent(itemView.context, DetailActivity::class.java)
                     intent.putExtra(DetailActivity.EXTRA_TVSHOW, tvShow.Id)
                     itemView.context.startActivity(intent)
                 }
                 Glide.with(itemView.context)
-                        .load(tvShow.imgPhoto)
+                        .load(imageUrl + tvShow.imgPhoto)
                         .transform(RoundedCorners(12))
                         .into(imgPoster)
             }

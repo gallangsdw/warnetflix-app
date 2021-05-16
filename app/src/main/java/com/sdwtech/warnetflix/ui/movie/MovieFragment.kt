@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sdwtech.warnetflix.databinding.FragmentMovieBinding
+import com.sdwtech.warnetflix.viewmodel.ViewModelFactory
 
 class MovieFragment : Fragment() {
     private lateinit var fragmentMovieBinding: FragmentMovieBinding
@@ -23,11 +24,17 @@ class MovieFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (activity != null) {
-            val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[MovieViewModel::class.java]
-            val movies = viewModel.getMovies()
+            val factory = ViewModelFactory.getInstance(requireActivity())
+            val viewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
 
             val movieAdapter = MovieAdapter()
-            movieAdapter.setMovies(movies)
+
+            fragmentMovieBinding.progressBar.visibility = View.VISIBLE
+            viewModel.getMovies().observe(viewLifecycleOwner, { movies ->
+                fragmentMovieBinding.progressBar.visibility = View.GONE
+                movieAdapter.setMovies(movies)
+                movieAdapter.notifyDataSetChanged()
+            })
             with(fragmentMovieBinding.rvMovie) {
                 layoutManager = LinearLayoutManager(context)
                 setHasFixedSize(true)

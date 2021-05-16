@@ -1,10 +1,11 @@
 package com.sdwtech.warnetflix.ui.movie
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.sdwtech.warnetflix.data.Entity
-import com.sdwtech.warnetflix.utils.DataDummy
+import com.sdwtech.warnetflix.data.WarnetflixRepository
+import com.sdwtech.warnetflix.data.source.local.entity.Entity
 
-class MovieViewModel:ViewModel() {
+class MovieViewModel(private val warnetflixRepository: WarnetflixRepository):ViewModel() {
 
-    fun getMovies():List<Entity> =DataDummy.generateDummyMovie()
+    fun getMovies():LiveData<List<Entity>> = warnetflixRepository.getMovies()
 }
