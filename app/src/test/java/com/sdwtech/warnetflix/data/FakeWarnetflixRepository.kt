@@ -8,16 +8,8 @@ import com.sdwtech.warnetflix.data.source.remote.response.DetailTvShowResponse
 import com.sdwtech.warnetflix.data.source.remote.response.Movies
 import com.sdwtech.warnetflix.data.source.remote.response.TvShows
 
-class WarnetflixRepository private constructor(private val remoteDataSource: RemoteDataSource): WarnetflixDataSource{
+class FakeWarnetflixRepository (private val remoteDataSource: RemoteDataSource): WarnetflixDataSource{
 
-    companion object {
-        @Volatile
-        private var instance: WarnetflixRepository? = null
-
-        fun getInstance(remoteData: RemoteDataSource): WarnetflixRepository = instance ?: synchronized(this) {
-            WarnetflixRepository(remoteData).apply { instance = this }
-        }
-    }
     override fun getMovies(): LiveData<Movies> {
         val movieResults = MutableLiveData<Movies>()
         remoteDataSource.getMovies(object : RemoteDataSource.LoadMovieCallback {

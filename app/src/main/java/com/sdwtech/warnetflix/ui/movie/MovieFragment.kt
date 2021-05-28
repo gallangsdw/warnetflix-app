@@ -32,8 +32,8 @@ class MovieFragment : Fragment() {
             fragmentMovieBinding.progressBar.visibility = View.VISIBLE
             viewModel.getMovies().observe(viewLifecycleOwner, { movies ->
                 fragmentMovieBinding.progressBar.visibility = View.GONE
-                movieAdapter.setMovies(movies)
-                movieAdapter.notifyDataSetChanged()
+                val movieEntity = movies.results
+                movieAdapter.setMovies(movieEntity)
             })
             with(fragmentMovieBinding.rvMovie) {
                 layoutManager = LinearLayoutManager(context)

@@ -3,21 +3,22 @@ package com.sdwtech.warnetflix.ui.detail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.sdwtech.warnetflix.data.WarnetflixRepository
-import com.sdwtech.warnetflix.data.source.local.entity.Entity
+import com.sdwtech.warnetflix.data.source.remote.response.DetailMovieResponse
+import com.sdwtech.warnetflix.data.source.remote.response.DetailTvShowResponse
 
 class DetailViewModel(private val warnetflixRepository: WarnetflixRepository): ViewModel() {
-    lateinit var movieId: String
-    lateinit var tvShowId: String
+    private var movieId = 0
+    private var tvShowId = 0
 
-    fun setSelectedMovie(movieId: String) {
+    fun setSelectedMovie(movieId: Int) {
         this.movieId = movieId
     }
 
-    fun setSelectedTvShow(tvShowId: String) {
+    fun setSelectedTvShow(tvShowId: Int) {
         this.tvShowId = tvShowId
     }
 
-    fun getMovieDetail(): LiveData<Entity> = warnetflixRepository.getDetailMovie(movieId)
+    fun getMovieDetail(): LiveData<DetailMovieResponse> = warnetflixRepository.getDetailMovie(movieId)
 
-    fun getTvShowDetail(): LiveData<Entity> = warnetflixRepository.getDetailTvShow(tvShowId)
+    fun getTvShowDetail(): LiveData<DetailTvShowResponse> = warnetflixRepository.getDetailTvShow(tvShowId)
 }

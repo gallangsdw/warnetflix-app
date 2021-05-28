@@ -1,11 +1,14 @@
 package com.sdwtech.warnetflix.ui.detail
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.sdwtech.warnetflix.data.source.local.entity.Entity
+
+import com.sdwtech.warnetflix.data.source.remote.response.DetailMovieResponse
+import com.sdwtech.warnetflix.data.source.remote.response.DetailTvShowResponse
 import com.sdwtech.warnetflix.databinding.ActivityDetailBinding
 import com.sdwtech.warnetflix.viewmodel.ViewModelFactory
 
@@ -33,33 +36,54 @@ class DetailActivity : AppCompatActivity() {
         val factory = ViewModelFactory.getInstance(this)
         val viewModel = ViewModelProvider(this, factory)[DetailViewModel::class.java]
 
-        val extras = intent.extras
-        if (extras != null) {
-            val movieId = extras.getString(EXTRA_MOVIE)
-            val tvShowId = extras.getString(EXTRA_TVSHOW)
+        val movieId = intent.getIntExtra(EXTRA_MOVIE,0)
+        val tvShowId = intent.getIntExtra(EXTRA_TVSHOW, 0)
 
-            if (movieId != null) {
-                viewModel.setSelectedMovie(movieId)
-                viewModel.getMovieDetail().observe(this, { movie ->
-                    populate(movie)
-                })
-            } else if (tvShowId != null) {
-                viewModel.getTvShowDetail().observe(this,{tvShow ->
-                    populate(tvShow)
-                })
-            }
-        }
+        detailBinding.progressBar.visibility = View.VISIBLE
+        detailBinding.tvRating.visibility = View.INVISIBLE
+        detailBinding.tvDesc.visibility = View.INVISIBLE
+        detailBinding.tvDetailTitle.visibility = View.INVISIBLE
+
+        viewModel.setSelectedMovie(movieId)
+        viewModel.getMovieDetail().observe(this, { movie ->
+            populateMovie(movie)
+            detailBinding.progressBar.visibility = View.GONE
+            detailBinding.tvRating.visibility = View.VISIBLE
+            detailBinding.tvDesc.visibility = View.VISIBLE
+            detailBinding.tvDetailTitle.visibility = View.VISIBLE
+        })
+
+        viewModel.setSelectedTvShow(tvShowId)
+        viewModel.getTvShowDetail().observe(this, {tvShow ->
+            populateTvShow(tvShow)
+            detailBinding.progressBar.visibility = View.GONE
+            detailBinding.tvRating.visibility = View.VISIBLE
+            detailBinding.tvDesc.visibility = View.VISIBLE
+            detailBinding.tvDetailTitle.visibility = View.VISIBLE
+        })
     }
 
-    private fun populate(entity: Entity) {
-        val imageUrl = "https://www.themoviedb.org/t/p/w600_and_h900_bestv2"
-        detailBinding.tvDetailTitle.text = entity.title
-        detailBinding.tvDesc.text = entity.description
-        detailBinding.tvRating.text = entity.rating.toString()
+    private fun populateMovie(movie: DetailMovieResponse) {
+        val imageUrl = "https://image.tmdb.org/t/p/w500"
+        detailBinding.tvDetailTitle.text = movie.title
+        detailBinding.tvDesc.text = movie.overview
+        detailBinding.tvRating.text = movie.voteAverage.toString()
 
         Glide.with(this)
-            .load(imageUrl + entity.imgTrailer)
-            .transform(RoundedCorners(15))
-            .into(detailBinding.imgTrailer)
+                .load(imageUrl + movie.backdropPath)
+                .transform(RoundedCorners(15))
+                .into(detailBinding.imgTrailer)
+    }
+
+    private fun populateTvShow(tvShow: DetailTvShowResponse) {
+        val imageUrl = "https://image.tmdb.org/t/p/w500"
+        detailBinding.tvDetailTitle.text = tvShow.name
+        detailBinding.tvDesc.text = tvShow.overview
+        detailBinding.tvRating.text = tvShow.voteAverage.toString()
+
+        Glide.with(this)
+                .load(imageUrl + tvShow.backdropPath)
+                .transform(RoundedCorners(15))
+                .into(detailBinding.imgTrailer)
     }
 }
