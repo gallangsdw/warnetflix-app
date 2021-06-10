@@ -1,17 +1,25 @@
 package com.sdwtech.warnetflix.data
 
 import androidx.lifecycle.LiveData
-import com.sdwtech.warnetflix.data.source.remote.response.DetailMovieResponse
-import com.sdwtech.warnetflix.data.source.remote.response.DetailTvShowResponse
-import com.sdwtech.warnetflix.data.source.remote.response.Movies
-import com.sdwtech.warnetflix.data.source.remote.response.TvShows
+import androidx.paging.PagedList
+import com.sdwtech.warnetflix.data.source.local.entity.MovieEntity
+import com.sdwtech.warnetflix.data.source.local.entity.TvShowEntity
+import com.sdwtech.warnetflix.vo.Resource
 
 interface WarnetflixDataSource {
-    fun getMovies(): LiveData<Movies>
+    fun getMovies(): LiveData<Resource<PagedList<MovieEntity>>>
 
-    fun getDetailMovie(movieId: Int): LiveData<DetailMovieResponse>
+    fun getDetailMovie(movieId: Int): LiveData<Resource<MovieEntity>>
 
-    fun getTvShow(): LiveData<TvShows>
+    fun getFavoriteMovie(): LiveData<PagedList<MovieEntity>>
 
-    fun getDetailTvShow(tvShowId: Int): LiveData<DetailTvShowResponse>
+    fun setFavoriteMovie(movie: MovieEntity, isFavorite: Boolean)
+
+    fun getTvShow(): LiveData<Resource<PagedList<TvShowEntity>>>
+
+    fun getDetailTvShow(tvShowId: Int): LiveData<Resource<TvShowEntity>>
+
+    fun getFavoriteTvShow(): LiveData<PagedList<TvShowEntity>>
+
+    fun setFavoriteTvShow(tvShow: TvShowEntity, isFavorite: Boolean)
 }

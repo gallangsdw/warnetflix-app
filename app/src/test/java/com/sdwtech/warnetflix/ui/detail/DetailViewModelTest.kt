@@ -4,11 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.sdwtech.warnetflix.data.WarnetflixRepository
-import com.sdwtech.warnetflix.data.source.local.entity.Entity
 import com.sdwtech.warnetflix.data.source.remote.response.DetailMovieResponse
 import com.sdwtech.warnetflix.data.source.remote.response.DetailTvShowResponse
-import com.sdwtech.warnetflix.data.source.remote.response.MovieResponse
-import com.sdwtech.warnetflix.data.source.remote.response.Movies
 import com.sdwtech.warnetflix.utils.DataDummy
 import org.junit.Test
 
@@ -20,7 +17,6 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
-import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class DetailViewModelTest {
