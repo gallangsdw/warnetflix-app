@@ -16,13 +16,6 @@ class DetailViewModel(private val warnetflixRepository: WarnetflixRepository): V
 
     private lateinit var detailMovie: LiveData<Resource<MovieEntity>>
     private lateinit var detailTvShow: LiveData<Resource<TvShowEntity>>
-    private var movieId = 0
-    private var tvShowId = 0
-    private var id: Int = 0
-
-    fun setSelectedId(id: Int) {
-        this.id = id
-    }
 
     fun setType(id: Int, type: String) {
         when (type) {
@@ -35,7 +28,23 @@ class DetailViewModel(private val warnetflixRepository: WarnetflixRepository): V
         }
     }
 
-    fun getMovieDetail(): LiveData<Resource<MovieEntity>> = warnetflixRepository.getDetailMovie(movieId)
+    fun getMovieDetail() = detailMovie
 
-    fun getTvShowDetail(): LiveData<Resource<TvShowEntity>> = warnetflixRepository.getDetailTvShow(tvShowId)
+    fun getTvShowDetail() = detailTvShow
+
+    fun setFavoriteMovie() {
+        val movieSource = detailMovie.value
+        if (movieSource?.data != null) {
+            val newState = !movieSource.data.isFavorite
+            warnetflixRepository.setFavoriteMovie(movieSource.data, newState)
+        }
+    }
+
+    fun setFavoriteTvShow() {
+        val tvShowResource = detailTvShow.value
+        if (tvShowResource?.data != null) {
+            val newState = !tvShowResource.data.isFavorite
+            warnetflixRepository.setFavoriteTvShow(tvShowResource.data, newState)
+        }
+    }
 }

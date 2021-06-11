@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.sdwtech.warnetflix.R
 import com.sdwtech.warnetflix.data.source.local.entity.MovieEntity
 import com.sdwtech.warnetflix.data.source.local.entity.TvShowEntity
 import com.sdwtech.warnetflix.databinding.ActivityDetailBinding
@@ -15,7 +16,7 @@ import com.sdwtech.warnetflix.ui.detail.DetailViewModel.Companion.TV_SHOW
 import com.sdwtech.warnetflix.viewmodel.ViewModelFactory
 import com.sdwtech.warnetflix.vo.Status
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var detailBinding: ActivityDetailBinding
     private lateinit var viewModel: DetailViewModel
@@ -23,7 +24,6 @@ class DetailActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_MOVIE = "extra_movie"
-        const val EXTRA_TVSHOW = "extra_tvshow"
         const val EXTRA_TYPE = "extra_type"
     }
 
@@ -39,70 +39,134 @@ class DetailActivity : AppCompatActivity() {
             finish()
         }
 
+        detailBinding.btnFav.setOnClickListener(this)
+
         val factory = ViewModelFactory.getInstance(this)
         viewModel = ViewModelProvider(this, factory)[DetailViewModel::class.java]
 
         val extras = intent.extras
 
-        type = extras?.getString(EXTRA_TYPE)
         val id = intent.getIntExtra(EXTRA_MOVIE,0)
-        val tvShowId = intent.getIntExtra(EXTRA_TVSHOW, 0)
+        type = extras?.getString(EXTRA_TYPE)
 
-        type?.let {
-            viewModel.setType(id, it)
+        if (type != null) {
+            viewModel.setType(id, type.toString())
+            setupState()
+
+            if (type == MOVIE) {
+                viewModel.getMovieDetail().observe(this, { movie ->
+                    if (movie != null) {
+                        when (movie.status) {
+                            Status.LOADING -> {
+                                detailBinding.progressBar.visibility = View.VISIBLE
+                                detailBinding.tvDetailTitle.visibility = View.GONE
+                                detailBinding.tvDesc.visibility = View.GONE
+                                detailBinding.tvRating.visibility = View.GONE
+                                detailBinding.imgTrailer.visibility = View.GONE
+                                detailBinding.overview.visibility = View.GONE
+                            }
+                            Status.SUCCESS ->
+                                if (movie.data != null) {
+                                    detailBinding.progressBar.visibility = View.GONE
+                                    detailBinding.overview.visibility = View.VISIBLE
+                                    populateMovie(movie.data)
+                                }
+                            Status.ERROR -> {
+                                detailBinding.progressBar.visibility = View.GONE
+                                Toast.makeText(applicationContext, "aduh, ada yang salah ni, pasti kamu cowo", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                })
+            } else if (type == TV_SHOW) {
+                viewModel.getTvShowDetail().observe(this, { tvShow ->
+                    if (tvShow != null) {
+                        when (tvShow.status) {
+                            Status.LOADING -> {
+                                detailBinding.progressBar.visibility = View.VISIBLE
+                                detailBinding.progressBar.visibility = View.VISIBLE
+                                detailBinding.tvDetailTitle.visibility = View.GONE
+                                detailBinding.tvDesc.visibility = View.GONE
+                                detailBinding.tvRating.visibility = View.GONE
+                                detailBinding.imgTrailer.visibility = View.GONE
+                                detailBinding.overview.visibility = View.GONE
+                            }
+                            Status.SUCCESS ->
+                                if (tvShow.data != null) {
+                                    detailBinding.progressBar.visibility = View.GONE
+                                    detailBinding.overview.visibility = View.GONE
+                                    populateTvShow(tvShow.data)
+                                }
+                            Status.ERROR -> {
+                                detailBinding.progressBar.visibility = View.GONE
+                                Toast.makeText(applicationContext, "aduh, ada yang salah ni, pasti kamu cowo", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                })
+            }
         }
+    }
 
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_fav -> {
+                onFavClicked()
+            }
+        }
+    }
+
+    private fun setupState() {
         if (type == MOVIE) {
             viewModel.getMovieDetail().observe(this, { movie ->
-                if (movie != null) {
-                    when (movie.status) {
-                        Status.LOADING -> {
-                            detailBinding.progressBar.visibility = View.VISIBLE
-                            detailBinding.tvDetailTitle.visibility = View.GONE
-                            detailBinding.tvDesc.visibility = View.GONE
-                            detailBinding.tvRating.visibility = View.GONE
-                            detailBinding.imgTrailer.visibility = View.GONE
-                            detailBinding.overview.visibility = View.GONE
-                        }
-                        Status.SUCCESS ->
-                            if (movie.data != null) {
-                                detailBinding.progressBar.visibility = View.GONE
-                                detailBinding.overview.visibility = View.VISIBLE
-                                populateMovie(movie.data)
-                            }
-                        Status.ERROR -> {
+                when (movie.status) {
+                    Status.LOADING -> detailBinding.progressBar.visibility = View.VISIBLE
+                    Status.SUCCESS -> {
+                        if (movie.data != null) {
                             detailBinding.progressBar.visibility = View.GONE
-                            Toast.makeText(applicationContext,"aduh, ada yang salah ni, pasti kamu cowo", Toast.LENGTH_SHORT).show()
+                            val state = movie.data.isFavorite
+                            setFavState(state)
                         }
+                    }
+                    Status.ERROR -> {
+                        detailBinding.progressBar.visibility = View.GONE
+                        Toast.makeText(applicationContext, "aduh, ada yang salah ni, pasti kamu cowo", Toast.LENGTH_SHORT).show()
                     }
                 }
             })
         } else if (type == TV_SHOW) {
             viewModel.getTvShowDetail().observe(this, { tvShow ->
-                if (tvShow != null) {
-                    when (tvShow.status) {
-                        Status.LOADING -> {
-                            detailBinding.progressBar.visibility = View.VISIBLE
-                            detailBinding.progressBar.visibility = View.VISIBLE
-                            detailBinding.tvDetailTitle.visibility = View.GONE
-                            detailBinding.tvDesc.visibility = View.GONE
-                            detailBinding.tvRating.visibility = View.GONE
-                            detailBinding.imgTrailer.visibility = View.GONE
-                            detailBinding.overview.visibility = View.GONE
-                        }
-                        Status.SUCCESS ->
-                            if (tvShow.data != null) {
-                                detailBinding.progressBar.visibility = View.GONE
-                                detailBinding.overview.visibility = View.GONE
-                                populateTvShow(tvShow.data)
-                            }
-                        Status.ERROR -> {
+                when (tvShow.status) {
+                    Status.LOADING -> detailBinding.progressBar.visibility = View.VISIBLE
+                    Status.SUCCESS -> {
+                        if (tvShow. data != null) {
                             detailBinding.progressBar.visibility = View.GONE
-                            Toast.makeText(applicationContext, "aduh, ada yang salah ni, pasti kamu cowo", Toast.LENGTH_SHORT).show()
+                            val state = tvShow.data.isFavorite
+                            setFavState(state)
                         }
+                    }
+                    Status.ERROR -> {
+                        detailBinding.progressBar.visibility =View.GONE
+                        Toast.makeText(applicationContext,"aduh, ada yang salah ni, pasti kamu cowo", Toast.LENGTH_SHORT).show()
                     }
                 }
             })
+        }
+    }
+
+    private fun onFavClicked() {
+        if (type == MOVIE) {
+            viewModel.setFavoriteMovie()
+        } else if (type == TV_SHOW) {
+            viewModel.setFavoriteTvShow()
+        }
+    }
+
+    private fun setFavState(isFav: Boolean) {
+        if (isFav) {
+            detailBinding.btnFav.setImageResource(R.drawable.ic_favorite_24)
+        } else {
+            detailBinding.btnFav.setImageResource(R.drawable.ic_favorite_border_24)
         }
     }
 

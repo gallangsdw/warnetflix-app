@@ -54,7 +54,7 @@ class MovieFragment : Fragment() {
             })
             with(fragmentMovieBinding.rvMovie) {
                 layoutManager = LinearLayoutManager(context)
-                setHasFixedSize(true)
+                setHasFixedSize(false)
                 adapter=movieAdapter
             }
 
@@ -63,6 +63,8 @@ class MovieFragment : Fragment() {
                     val intent = Intent(context, DetailActivity::class.java)
                     intent.putExtra(DetailActivity.EXTRA_MOVIE,id)
                     intent.putExtra(DetailActivity.EXTRA_TYPE, MOVIE)
+
+                    context?.startActivity(intent)
                 }
             })
         }
