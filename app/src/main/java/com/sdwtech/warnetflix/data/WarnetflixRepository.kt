@@ -68,17 +68,17 @@ class WarnetflixRepository private constructor(
         }.asLiveData()
     }
 
-    override fun getDetailMovie(id: Int): LiveData<Resource<MovieEntity>> {
-        Log.d("repository","movie id: $id")
+    override fun getDetailMovie(movieId: Int): LiveData<Resource<MovieEntity>> {
+        Log.d("repository","movie id: $movieId")
         return object : NetworkBoundResource<MovieEntity, DetailMovieResponse>(appExecutors) {
             override fun loadFromDB(): LiveData<MovieEntity> =
-                localDataSource.getMovieById(id)
+                localDataSource.getMovieById(movieId)
 
             override fun shouldFetch(data: MovieEntity?): Boolean =
                     data == null
 
             override fun createCall(): LiveData<ApiResponse<DetailMovieResponse>> =
-                    remoteDataSource.getDetailMovie(id)
+                    remoteDataSource.getDetailMovie(movieId)
 
             override fun saveCallResult(detailMovieResponses: DetailMovieResponse) {
                 val movie = MovieEntity(

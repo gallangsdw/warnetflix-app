@@ -16,6 +16,7 @@ import com.sdwtech.warnetflix.ui.detail.DetailViewModel.Companion.MOVIE
 import com.sdwtech.warnetflix.ui.detail.DetailViewModel.Companion.TV_SHOW
 import com.sdwtech.warnetflix.viewmodel.ViewModelFactory
 import com.sdwtech.warnetflix.vo.Status
+import java.lang.StringBuilder
 
 class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -64,11 +65,6 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
                         when (movie.status) {
                             Status.LOADING -> {
                                 detailBinding.progressBar.visibility = View.VISIBLE
-                                detailBinding.tvDetailTitle.visibility = View.GONE
-                                detailBinding.tvDesc.visibility = View.GONE
-                                detailBinding.tvRating.visibility = View.GONE
-                                detailBinding.imgTrailer.visibility = View.GONE
-                                detailBinding.overview.visibility = View.GONE
                             }
                             Status.SUCCESS ->
                                 if (movie.data != null) {
@@ -78,7 +74,7 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
                                 }
                             Status.ERROR -> {
                                 detailBinding.progressBar.visibility = View.GONE
-                                Toast.makeText(applicationContext, "aduh, ada yang salah ni, pasti kamu cowo", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(applicationContext, "aduh, ada yang salah ni", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -89,22 +85,16 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
                         when (tvShow.status) {
                             Status.LOADING -> {
                                 detailBinding.progressBar.visibility = View.VISIBLE
-                                detailBinding.progressBar.visibility = View.VISIBLE
-                                detailBinding.tvDetailTitle.visibility = View.GONE
-                                detailBinding.tvDesc.visibility = View.GONE
-                                detailBinding.tvRating.visibility = View.GONE
-                                detailBinding.imgTrailer.visibility = View.GONE
-                                detailBinding.overview.visibility = View.GONE
                             }
                             Status.SUCCESS ->
                                 if (tvShow.data != null) {
                                     detailBinding.progressBar.visibility = View.GONE
-                                    detailBinding.overview.visibility = View.GONE
+                                    detailBinding.overview.visibility = View.VISIBLE
                                     populateTvShow(tvShow.data)
                                 }
                             Status.ERROR -> {
                                 detailBinding.progressBar.visibility = View.GONE
-                                Toast.makeText(applicationContext, "aduh, ada yang salah ni, pasti kamu cowo", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(applicationContext, "aduh, ada yang salah ni", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -176,26 +166,35 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun populateMovie(movie: MovieEntity) {
-        val imageUrl = "https://image.tmdb.org/t/p/w500"
+        val imgTrailer = "https://image.tmdb.org/t/p/w533_and_h300_bestv2"
+        val imageUrl = "https://image.tmdb.org/t/p/original"
         detailBinding.tvDetailTitle.text = movie.title
         detailBinding.tvDesc.text = movie.overview
-        detailBinding.tvRating.text = movie.voteAverage
+        detailBinding.tvRating.text = StringBuilder("Rating: " + movie.voteAverage)
 
         Glide.with(this)
-                .load(imageUrl + movie.backdropPath)
-                .transform(RoundedCorners(15))
+                .load(imgTrailer + movie.backdropPath)
                 .into(detailBinding.imgTrailer)
+
+        Glide.with(this)
+            .load(imageUrl + movie.posterPath)
+            .transform(RoundedCorners(8))
+            .into(detailBinding.imgPoster)
     }
 
     private fun populateTvShow(tvShow: TvShowEntity) {
-        val imageUrl = "https://image.tmdb.org/t/p/w500"
+        val imgTrailer = "https://image.tmdb.org/t/p/w533_and_h300_bestv2"
+        val imageUrl = "https://image.tmdb.org/t/p/original"
         detailBinding.tvDetailTitle.text = tvShow.name
         detailBinding.tvDesc.text = tvShow.overview
-        detailBinding.tvRating.text = tvShow.voteAverage
+        detailBinding.tvRating.text = StringBuilder("Rating: " + tvShow.voteAverage)
 
         Glide.with(this)
-                .load(imageUrl + tvShow.backdropPath)
-                .transform(RoundedCorners(15))
+                .load(imgTrailer + tvShow.backdropPath)
                 .into(detailBinding.imgTrailer)
+        Glide.with(this)
+            .load(imageUrl + tvShow.posterPath)
+            .transform(RoundedCorners(8))
+            .into(detailBinding.imgPoster)
     }
 }

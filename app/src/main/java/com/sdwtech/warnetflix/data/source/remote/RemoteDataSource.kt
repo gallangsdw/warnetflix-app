@@ -40,11 +40,11 @@ class RemoteDataSource {
         return resultMovies
     }
 
-    fun getDetailMovie(id: Int): LiveData<ApiResponse<DetailMovieResponse>> {
+    fun getDetailMovie(movieId: Int): LiveData<ApiResponse<DetailMovieResponse>> {
         EspressoIdlingResource.increment()
         val resultDetailMovie = MutableLiveData<ApiResponse<DetailMovieResponse>>()
 
-        ApiConfig.getApiService().getDetailMovie(id, BuildConfig.MOVIEDB_API)
+        ApiConfig.getApiService().getDetailMovie(movieId, BuildConfig.MOVIEDB_API)
                 .enqueue(object : Callback<DetailMovieResponse> {
             override fun onResponse(call: Call<DetailMovieResponse>, response: Response<DetailMovieResponse>) {
                 Log.d("remote source:", "response: $response")
