@@ -1,4 +1,4 @@
-package com.sdwtech.warnetflix.ui.tvshow
+package com.sdwtech.warnetflix.ui.favorite.tvshow
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.sdwtech.warnetflix.data.source.local.entity.TvShowEntity
 import com.sdwtech.warnetflix.databinding.ItemsMovieBinding
 
-class TvShowAdapter: PagedListAdapter<TvShowEntity, TvShowAdapter.TvShowViewHolder>(DIFF_CALLBACK) {
+class FavTvShowAdapter: PagedListAdapter<TvShowEntity, FavTvShowAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TvShowEntity>() {
@@ -30,20 +30,18 @@ class TvShowAdapter: PagedListAdapter<TvShowEntity, TvShowAdapter.TvShowViewHold
         this.onItemClickCallback = onItemClickCallback
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TvShowViewHolder {
-        val itemTvShowBinding = ItemsMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return TvShowViewHolder(itemTvShowBinding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavTvShowAdapter.ViewHolder {
+        return ViewHolder(ItemsMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun onBindViewHolder(holder: TvShowViewHolder, position: Int) {
-        val tvShow = getItem(position)
-        if (tvShow != null) {
-            holder.bind(tvShow)
+    override fun onBindViewHolder(holder: FavTvShowAdapter.ViewHolder, position: Int) {
+        val tvShows = getItem(position)
+        if (tvShows != null) {
+            holder.bind(tvShows)
         }
     }
 
-
-    inner class TvShowViewHolder(private val binding: ItemsMovieBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemsMovieBinding) : RecyclerView.ViewHolder(binding.root) {
         private val imageUrl = "https://www.themoviedb.org/t/p/w600_and_h900_bestv2"
         fun bind(tvShow: TvShowEntity) {
             with(binding) {
@@ -54,9 +52,9 @@ class TvShowAdapter: PagedListAdapter<TvShowEntity, TvShowAdapter.TvShowViewHold
                     onItemClickCallback.onItemClicked(tvShow)
                 }
                 Glide.with(itemView.context)
-                        .load(imageUrl + tvShow.posterPath)
-                        .transform(RoundedCorners(12))
-                        .into(imgPoster)
+                    .load(imageUrl + tvShow.posterPath)
+                    .transform(RoundedCorners(12))
+                    .into(imgPoster)
             }
         }
     }
@@ -65,4 +63,3 @@ class TvShowAdapter: PagedListAdapter<TvShowEntity, TvShowAdapter.TvShowViewHold
         fun onItemClicked(tvShow: TvShowEntity)
     }
 }
-

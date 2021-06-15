@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.sdwtech.warnetflix.data.WarnetflixRepository
 import com.sdwtech.warnetflix.di.Injection
 import com.sdwtech.warnetflix.ui.detail.DetailViewModel
+import com.sdwtech.warnetflix.ui.favorite.movie.FavMovieViewModel
+import com.sdwtech.warnetflix.ui.favorite.tvshow.FavTvShowViewModel
 import com.sdwtech.warnetflix.ui.movie.MovieViewModel
 import com.sdwtech.warnetflix.ui.tvshow.TvShowViewModel
 
@@ -32,6 +34,12 @@ class ViewModelFactory private constructor(private val mWarnetflixRepository: Wa
             }
             modelClass.isAssignableFrom(DetailViewModel::class.java) -> {
                 DetailViewModel(mWarnetflixRepository) as T
+            }
+            modelClass.isAssignableFrom(FavMovieViewModel::class.java) -> {
+                FavMovieViewModel(mWarnetflixRepository) as T
+            }
+            modelClass.isAssignableFrom(FavTvShowViewModel::class.java) -> {
+                FavTvShowViewModel(mWarnetflixRepository) as T
             }
             else -> throw Throwable("Unknown ViewModel class: "+ modelClass.name)
         }

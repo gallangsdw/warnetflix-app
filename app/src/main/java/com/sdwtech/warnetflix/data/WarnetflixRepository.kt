@@ -1,5 +1,6 @@
 package com.sdwtech.warnetflix.data
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -67,27 +68,29 @@ class WarnetflixRepository private constructor(
         }.asLiveData()
     }
 
-    override fun getDetailMovie(movieId: Int): LiveData<Resource<MovieEntity>> {
+    override fun getDetailMovie(id: Int): LiveData<Resource<MovieEntity>> {
+        Log.d("repository","movie id: $id")
         return object : NetworkBoundResource<MovieEntity, DetailMovieResponse>(appExecutors) {
             override fun loadFromDB(): LiveData<MovieEntity> =
-                localDataSource.getMovieById(movieId)
+                localDataSource.getMovieById(id)
 
             override fun shouldFetch(data: MovieEntity?): Boolean =
                     data == null
 
             override fun createCall(): LiveData<ApiResponse<DetailMovieResponse>> =
-                    remoteDataSource.getDetailMovie(movieId)
+                    remoteDataSource.getDetailMovie(id)
 
             override fun saveCallResult(detailMovieResponses: DetailMovieResponse) {
                 val movie = MovieEntity(
-                        detailMovieResponses.id,
-                        detailMovieResponses.backdropPath,
-                        detailMovieResponses.overview,
-                        detailMovieResponses.originalTitle,
-                        detailMovieResponses.releaseDate,
-                        detailMovieResponses.voteAverage.toString(),
-                        detailMovieResponses.title,
-                        detailMovieResponses.posterPath)
+                        id = detailMovieResponses.id,
+                        backdropPath = detailMovieResponses.backdropPath,
+                        overview = detailMovieResponses.overview,
+                        originalTitle = detailMovieResponses.originalTitle,
+                        releaseDate = detailMovieResponses.releaseDate,
+                        voteAverage = detailMovieResponses.voteAverage.toString(),
+                        title = detailMovieResponses.title,
+                        posterPath = detailMovieResponses.posterPath,
+                        isFavorite = false)
                 localDataSource.updateMovie(movie)
             }
         }.asLiveData()

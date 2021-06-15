@@ -1,5 +1,6 @@
 package com.sdwtech.warnetflix.ui.detail
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.sdwtech.warnetflix.data.WarnetflixRepository
@@ -26,6 +27,7 @@ class DetailViewModel(private val warnetflixRepository: WarnetflixRepository): V
                 detailTvShow = warnetflixRepository.getDetailTvShow(id)
             }
         }
+        Log.d("set type","id detail: $id , $type")
     }
 
     fun getMovieDetail() = detailMovie

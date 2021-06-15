@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "com.sdwtech.warnetflix"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -84,4 +84,6 @@ dependencies {
     kapt "androidx.room:room-compiler:$roomVersion"
 
     implementation "androidx.paging:paging-runtime:$pagingVersion"
+
+    implementation 'com.github.yogacp:android-viewbinding:1.0.2'
 }

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sdwtech.warnetflix.data.source.local.entity.TvShowEntity
 import com.sdwtech.warnetflix.databinding.FragmentTvShowBinding
 import com.sdwtech.warnetflix.ui.detail.DetailActivity
 import com.sdwtech.warnetflix.ui.detail.DetailViewModel.Companion.TV_SHOW
@@ -16,7 +17,7 @@ import com.sdwtech.warnetflix.viewmodel.ViewModelFactory
 import com.sdwtech.warnetflix.vo.Status
 
 
-class TvShowFragment : Fragment() {
+class TvShowFragment : Fragment(), TvShowAdapter.OnItemClickCallback {
     private lateinit var fragmentTvShowBinding: FragmentTvShowBinding
 
     override fun onCreateView(
@@ -44,6 +45,7 @@ class TvShowFragment : Fragment() {
                         Status.SUCCESS -> {
                             fragmentTvShowBinding.progressBar.visibility = View.GONE
                             tvShowAdapter.submitList(tvShows.data)
+                            tvShowAdapter.setOnItemClickCallback(this)
                             tvShowAdapter.notifyDataSetChanged()
                         }
                         Status.ERROR -> {
@@ -58,14 +60,14 @@ class TvShowFragment : Fragment() {
                 setHasFixedSize(true)
                 adapter = tvShowAdapter
             }
-
-            tvShowAdapter.setOnItemClickCallback(object : TvShowAdapter.OnItemClickCallback {
-                override fun onItemClicked(id: String) {
-                    val intent = Intent(context, DetailActivity::class.java)
-                    intent.putExtra(DetailActivity.EXTRA_MOVIE, id)
-                    intent.putExtra(DetailActivity.EXTRA_TYPE, TV_SHOW)
-                }
-            })
         }
+    }
+
+    override fun onItemClicked(tvShow: TvShowEntity) {
+        val intent = Intent(context, DetailActivity::class.java)
+        intent.putExtra(DetailActivity.EXTRA_MOVIE, tvShow.id)
+        intent.putExtra(DetailActivity.EXTRA_TYPE, TV_SHOW)
+
+        context?.startActivity(intent)
     }
 }

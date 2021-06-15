@@ -1,6 +1,7 @@
 package com.sdwtech.warnetflix.ui.detail
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -46,11 +47,15 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
         val extras = intent.extras
 
-        val id = intent.getIntExtra(EXTRA_MOVIE,0)
+        val id = extras?.getInt(EXTRA_MOVIE)
         type = extras?.getString(EXTRA_TYPE)
 
+        Log.d("detail activity","id detail: $id , $type")
+
         if (type != null) {
-            viewModel.setType(id, type.toString())
+            if (id != null) {
+                viewModel.setType(id, type!!)
+            }
             setupState()
 
             if (type == MOVIE) {
