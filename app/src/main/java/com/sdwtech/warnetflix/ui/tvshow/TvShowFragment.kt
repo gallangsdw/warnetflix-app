@@ -65,7 +65,7 @@ class TvShowFragment : Fragment(), TvShowAdapter.OnItemClickCallback {
 
     override fun onItemClicked(tvShow: TvShowEntity) {
         val intent = Intent(context, DetailActivity::class.java)
-        intent.putExtra(DetailActivity.EXTRA_MOVIE, tvShow.id)
+        intent.putExtra(DetailActivity.EXTRA_ID, tvShow.id)
         intent.putExtra(DetailActivity.EXTRA_TYPE, TV_SHOW)
 
         context?.startActivity(intent)

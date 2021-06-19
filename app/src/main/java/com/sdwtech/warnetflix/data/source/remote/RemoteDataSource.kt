@@ -47,8 +47,7 @@ class RemoteDataSource {
         ApiConfig.getApiService().getDetailMovie(movieId, BuildConfig.MOVIEDB_API)
                 .enqueue(object : Callback<DetailMovieResponse> {
             override fun onResponse(call: Call<DetailMovieResponse>, response: Response<DetailMovieResponse>) {
-                Log.d("remote source:", "response: $response")
-                    resultDetailMovie.value = ApiResponse.success(response.body() as DetailMovieResponse)
+                resultDetailMovie.value = ApiResponse.success(response.body() as DetailMovieResponse)
                 EspressoIdlingResource.decrement()
 
             }

@@ -3,10 +3,16 @@ package com.sdwtech.warnetflix.ui.detail
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.sdwtech.warnetflix.data.WarnetflixRepository
-import com.sdwtech.warnetflix.data.source.remote.response.DetailMovieResponse
+import com.sdwtech.warnetflix.data.source.local.entity.MovieEntity
+import com.sdwtech.warnetflix.data.source.local.entity.TvShowEntity
 import com.sdwtech.warnetflix.data.source.remote.response.DetailTvShowResponse
+import com.sdwtech.warnetflix.ui.detail.DetailViewModel.Companion.MOVIE
+import com.sdwtech.warnetflix.ui.detail.DetailViewModel.Companion.TV_SHOW
 import com.sdwtech.warnetflix.utils.DataDummy
+import com.sdwtech.warnetflix.vo.Resource
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -15,7 +21,6 @@ import org.junit.Rule
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
@@ -25,8 +30,8 @@ class DetailViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val dummyMovie = DataDummy.generateRemoteDetailMovie()
-    private val dummyTvShow = DataDummy.generateRemoteDetailTvShow()
+    private val dummyMovie = DataDummy.generateDummyMovie()[0]
+    private val dummyTvShow = DataDummy.generateDummyTvShow()[0]
     private val movieId = dummyMovie.id
     private val tvShowId = dummyTvShow.id
 
@@ -34,56 +39,63 @@ class DetailViewModelTest {
     private lateinit var warnetflixRepository: WarnetflixRepository
 
     @Mock
-    private lateinit var movieObserver: Observer<DetailMovieResponse>
+    private lateinit var movieObserver: Observer<Resource<MovieEntity>>
 
     @Mock
-    private lateinit var tvShowObserver: Observer<DetailTvShowResponse>
+    private lateinit var tvShowObserver: Observer<Resource<TvShowEntity>>
 
     @Before
     fun setUp() {
         viewModel = DetailViewModel(warnetflixRepository)
-        viewModel.setSelectedMovie(movieId)
-        viewModel.setSelectedTvShow(tvShowId)
     }
 
     @Test
-    fun getMovie() {
-        val movie = MutableLiveData<DetailMovieResponse>()
-        movie.value = dummyMovie
-
+    fun getDetailMovie() {
+        val detailMovie = Resource.success(DataDummy.generateDetailMovie())
+        val movie = MutableLiveData<Resource<MovieEntity>>()
+        movie.value = detailMovie
         `when`(warnetflixRepository.getDetailMovie(movieId)).thenReturn(movie)
-        val movieEntity = viewModel.getMovieDetail().value as DetailMovieResponse
-        assertNotNull(movieEntity)
-        assertEquals(dummyMovie.id, movieEntity.id)
-        assertEquals(dummyMovie.title, movieEntity.title)
-        assertEquals(dummyMovie.posterPath, movieEntity.posterPath)
-        assertEquals(dummyMovie.backdropPath, movieEntity.backdropPath)
-        assertEquals(dummyMovie.overview, movieEntity.overview)
-        assertEquals(dummyMovie.voteAverage.toInt(), movieEntity.voteAverage.toInt())
-        assertEquals(dummyMovie.releaseDate, movieEntity.releaseDate)
 
+        viewModel.setType(movieId, MOVIE)
         viewModel.getMovieDetail().observeForever(movieObserver)
-        verify(movieObserver).onChanged(dummyMovie)
+        verify(movieObserver).onChanged(detailMovie)
     }
 
     @Test
-    fun getTvShow() {
-        val tvShow = MutableLiveData<DetailTvShowResponse>()
-        tvShow.value = dummyTvShow
+    fun setFavoriteMovie() {
+        val detailMovie = Resource.success(DataDummy.generateDetailMovie())
+        val movie = MutableLiveData<Resource<MovieEntity>>()
+        movie.value = detailMovie
+        `when`(warnetflixRepository.getDetailMovie(movieId)).thenReturn(movie)
 
+        viewModel.setType(movieId, MOVIE)
+        viewModel.setFavoriteMovie()
+        verify(warnetflixRepository).setFavoriteMovie(movie.value!!.data as MovieEntity, true)
+        verifyNoMoreInteractions(movieObserver)
+    }
+
+    @Test
+    fun getDetailTvShow() {
+        val detailTvShow = Resource.success(DataDummy.generateDetailTvShow())
+        val tvShow = MutableLiveData<Resource<TvShowEntity>>()
+        tvShow.value = detailTvShow
         `when`(warnetflixRepository.getDetailTvShow(tvShowId)).thenReturn(tvShow)
-        val tvShowEntity = viewModel.getTvShowDetail().value as DetailTvShowResponse
-        assertNotNull(tvShowEntity)
-        assertEquals(dummyTvShow.id, tvShowEntity.id)
-        assertEquals(dummyTvShow.name, tvShowEntity.name)
-        assertEquals(dummyTvShow.posterPath, tvShowEntity.posterPath)
-        assertEquals(dummyTvShow.backdropPath, tvShowEntity.backdropPath)
-        assertEquals(dummyTvShow.overview, tvShowEntity.overview)
-        assertEquals(dummyTvShow.firstAirDate, tvShowEntity.firstAirDate)
-        assertEquals(dummyTvShow.voteAverage.toInt(), tvShowEntity.voteAverage.toInt())
 
+        viewModel.setType(tvShowId, TV_SHOW)
         viewModel.getTvShowDetail().observeForever(tvShowObserver)
-        verify(tvShowObserver).onChanged(dummyTvShow)
+        verify(tvShowObserver).onChanged(detailTvShow)
+    }
 
+    @Test
+    fun setFavoriteTvShow() {
+        val detailTvShow = Resource.success(DataDummy.generateDetailTvShow())
+        val tvShow = MutableLiveData<Resource<TvShowEntity>>()
+        tvShow.value = detailTvShow
+        `when`(warnetflixRepository.getDetailTvShow(tvShowId)).thenReturn(tvShow)
+
+        viewModel.setType(tvShowId, TV_SHOW)
+        viewModel.setFavoriteTvShow()
+        verify(warnetflixRepository).setFavoriteTvShow(tvShow.value!!.data as TvShowEntity, true)
+        verifyNoMoreInteractions(tvShowObserver)
     }
 }

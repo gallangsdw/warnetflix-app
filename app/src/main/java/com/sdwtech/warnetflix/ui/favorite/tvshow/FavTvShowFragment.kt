@@ -52,7 +52,7 @@ class FavTvShowFragment : Fragment(), FavTvShowAdapter.OnItemClickCallback {
 
     override fun onItemClicked(tvShow: TvShowEntity) {
         val intent = Intent(context, DetailActivity::class.java)
-        intent.putExtra(DetailActivity.EXTRA_MOVIE, tvShow.id)
+        intent.putExtra(DetailActivity.EXTRA_ID, tvShow.id)
         intent.putExtra(DetailActivity.EXTRA_TYPE, TV_SHOW)
 
         Log.d("fav Tv Show", "intent fav: $intent")

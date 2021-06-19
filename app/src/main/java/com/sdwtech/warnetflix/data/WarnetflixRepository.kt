@@ -69,7 +69,6 @@ class WarnetflixRepository private constructor(
     }
 
     override fun getDetailMovie(movieId: Int): LiveData<Resource<MovieEntity>> {
-        Log.d("repository","movie id: $movieId")
         return object : NetworkBoundResource<MovieEntity, DetailMovieResponse>(appExecutors) {
             override fun loadFromDB(): LiveData<MovieEntity> =
                 localDataSource.getMovieById(movieId)

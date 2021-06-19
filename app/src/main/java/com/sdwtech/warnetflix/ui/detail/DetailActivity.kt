@@ -25,7 +25,7 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
     private var type: String? = null
 
     companion object {
-        const val EXTRA_MOVIE = "extra_movie"
+        const val EXTRA_ID = "extra_id"
         const val EXTRA_TYPE = "extra_type"
     }
 
@@ -48,7 +48,7 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
         val extras = intent.extras
 
-        val id = extras?.getInt(EXTRA_MOVIE)
+        val id = extras?.getInt(EXTRA_ID)
         type = extras?.getString(EXTRA_TYPE)
 
         Log.d("detail activity","id detail: $id , $type")

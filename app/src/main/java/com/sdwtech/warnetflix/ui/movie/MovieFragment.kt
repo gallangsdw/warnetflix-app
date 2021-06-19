@@ -63,7 +63,7 @@ class MovieFragment : Fragment(), MovieAdapter.OnItemClickCallback {
 
     override fun onItemClicked(movieEntity: MovieEntity) {
         val intent = Intent(context, DetailActivity::class.java)
-        intent.putExtra(DetailActivity.EXTRA_MOVIE, movieEntity.id)
+        intent.putExtra(DetailActivity.EXTRA_ID, movieEntity.id)
         intent.putExtra(DetailActivity.EXTRA_TYPE, MOVIE)
 
         Log.d("movie fragment", "intent movie fragment: ${movieEntity.id}")

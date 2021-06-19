@@ -27,7 +27,6 @@ class DetailViewModel(private val warnetflixRepository: WarnetflixRepository): V
                 detailTvShow = warnetflixRepository.getDetailTvShow(id)
             }
         }
-        Log.d("set type","id detail: $id , $type")
     }
 
     fun getMovieDetail() = detailMovie
