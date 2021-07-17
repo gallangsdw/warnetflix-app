@@ -7,17 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.sdwtech.warnetflix.data.source.local.entity.TvShowEntity
+import com.sdwtech.warnetflix.core.data.Resource
+import com.sdwtech.warnetflix.core.domain.model.TvShow
 import com.sdwtech.warnetflix.databinding.FragmentTvShowBinding
 import com.sdwtech.warnetflix.ui.detail.DetailActivity
 import com.sdwtech.warnetflix.ui.detail.DetailViewModel.Companion.TV_SHOW
-import com.sdwtech.warnetflix.viewmodel.ViewModelFactory
-import com.sdwtech.warnetflix.vo.Status
+import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class TvShowFragment : Fragment(), TvShowAdapter.OnItemClickCallback {
+
+    private val viewModel: TvShowViewModel by viewModel()
     private lateinit var fragmentTvShowBinding: FragmentTvShowBinding
 
     override fun onCreateView(
@@ -33,22 +34,19 @@ class TvShowFragment : Fragment(), TvShowAdapter.OnItemClickCallback {
         super.onViewCreated(view, savedInstanceState)
 
         if (activity != null) {
-            val factory = ViewModelFactory.getInstance(requireActivity())
-            val viewModel = ViewModelProvider(this, factory)[TvShowViewModel::class.java]
 
             val tvShowAdapter = TvShowAdapter()
 
             viewModel.getTvShows().observe(viewLifecycleOwner, { tvShows ->
                 if (tvShows != null) {
-                    when (tvShows.status) {
-                        Status.LOADING -> fragmentTvShowBinding.progressBar.visibility = View.VISIBLE
-                        Status.SUCCESS -> {
+                    when (tvShows) {
+                        is com.sdwtech.warnetflix.core.data.Resource.Loading -> fragmentTvShowBinding.progressBar.visibility = View.VISIBLE
+                        is com.sdwtech.warnetflix.core.data.Resource.Success -> {
                             fragmentTvShowBinding.progressBar.visibility = View.GONE
-                            tvShowAdapter.submitList(tvShows.data)
                             tvShowAdapter.setOnItemClickCallback(this)
-                            tvShowAdapter.notifyDataSetChanged()
+                            tvShowAdapter.setData(tvShows.data)
                         }
-                        Status.ERROR -> {
+                        is com.sdwtech.warnetflix.core.data.Resource.Error -> {
                             fragmentTvShowBinding.progressBar.visibility = View.GONE
                             Toast.makeText(context,"Terjadi kesalahan", Toast.LENGTH_SHORT).show()
                         }
@@ -63,7 +61,7 @@ class TvShowFragment : Fragment(), TvShowAdapter.OnItemClickCallback {
         }
     }
 
-    override fun onItemClicked(tvShow: TvShowEntity) {
+    override fun onItemClicked(tvShow: TvShow) {
         val intent = Intent(context, DetailActivity::class.java)
         intent.putExtra(DetailActivity.EXTRA_ID, tvShow.id)
         intent.putExtra(DetailActivity.EXTRA_TYPE, TV_SHOW)

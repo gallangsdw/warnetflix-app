@@ -1,14 +1,11 @@
 package com.sdwtech.warnetflix.ui.tvshow
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.paging.PagedList
-import com.sdwtech.warnetflix.data.WarnetflixRepository
-import com.sdwtech.warnetflix.data.source.local.entity.TvShowEntity
-import com.sdwtech.warnetflix.vo.Resource
+import androidx.lifecycle.asLiveData
+import com.sdwtech.warnetflix.core.domain.usecase.WarnetflixUseCase
 
-class TvShowViewModel(private val warnetflixRepository: WarnetflixRepository): ViewModel() {
+class TvShowViewModel(private val warnetflixUseCase: WarnetflixUseCase): ViewModel() {
 
-    fun getTvShows(): LiveData<Resource<PagedList<TvShowEntity>>> = warnetflixRepository.getTvShow()
+    fun getTvShows() = warnetflixUseCase.getAllTvShows().asLiveData()
 
 }

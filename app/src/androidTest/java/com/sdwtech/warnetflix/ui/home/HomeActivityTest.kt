@@ -10,8 +10,8 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import com.sdwtech.warnetflix.R
-import com.sdwtech.warnetflix.utils.DataDummy
-import com.sdwtech.warnetflix.utils.EspressoIdlingResource
+import com.sdwtech.warnetflix.core.utils.DataDummy
+import com.sdwtech.warnetflix.core.utils.EspressoIdlingResource
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

@@ -10,4 +10,5 @@
     <string name="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus non faucibus odio. Ut at ex laoreet, mollis enim eu, faucibus mauris. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam tortor turpis, lacinia vel consectetur sed, efficitur non ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras egestas condimentum felis vel faucibus.</string>
     <string name="favorite">favorite</string>
     <string name="favorite_button">favorite_button</string>
+    <string name="title_favorite">Favorite</string>
 </resources>

@@ -1,2 +1,4 @@
 include ':app'
 rootProject.name = "warnetflix"
+include ':core'
+include ':favorite'

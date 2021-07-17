@@ -17,7 +17,7 @@
         tools:layout="@layout/fragment_tv_show" />
     <fragment
         android:id="@+id/favoriteFragment"
-        android:name="com.sdwtech.warnetflix.ui.favorite.FavoriteFragment"
+        android:name="com.sdwtech.warnetflix.favorite.FavoriteFragment"
         android:label="fragment_favorite"
         tools:layout="@layout/fragment_favorite" />
 </navigation>

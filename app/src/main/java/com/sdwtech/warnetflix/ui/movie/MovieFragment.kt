@@ -8,16 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.sdwtech.warnetflix.data.source.local.entity.MovieEntity
+import com.sdwtech.warnetflix.core.data.Resource
+import com.sdwtech.warnetflix.core.domain.model.Movie
 import com.sdwtech.warnetflix.databinding.FragmentMovieBinding
 import com.sdwtech.warnetflix.ui.detail.DetailActivity
 import com.sdwtech.warnetflix.ui.detail.DetailViewModel.Companion.MOVIE
-import com.sdwtech.warnetflix.viewmodel.ViewModelFactory
-import com.sdwtech.warnetflix.vo.Status
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class MovieFragment : Fragment(), MovieAdapter.OnItemClickCallback {
+
+    private val viewModel : MovieViewModel by viewModel()
     private lateinit var fragmentMovieBinding: FragmentMovieBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -31,22 +32,21 @@ class MovieFragment : Fragment(), MovieAdapter.OnItemClickCallback {
         super.onViewCreated(view, savedInstanceState)
 
         if (activity != null) {
-            val factory = ViewModelFactory.getInstance(requireActivity())
-            val viewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
+//            val factory = ViewModelFactory.getInstance(requireActivity())
+//            val viewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
 
             val movieAdapter = MovieAdapter()
 
             viewModel.getMovies().observe(viewLifecycleOwner, { movies ->
                 if (movies != null) {
-                    when (movies.status) {
-                        Status.LOADING -> fragmentMovieBinding.progressBar.visibility = View.VISIBLE
-                        Status.SUCCESS -> {
+                    when (movies) {
+                        is com.sdwtech.warnetflix.core.data.Resource.Loading -> fragmentMovieBinding.progressBar.visibility = View.VISIBLE
+                        is com.sdwtech.warnetflix.core.data.Resource.Success -> {
                             fragmentMovieBinding.progressBar.visibility = View.GONE
-                            movieAdapter.submitList(movies.data)
                             movieAdapter.setOnItemClickCallBack(this)
-                            movieAdapter.notifyDataSetChanged()
+                            movieAdapter.setData(movies.data)
                         }
-                        Status.ERROR -> {
+                        is com.sdwtech.warnetflix.core.data.Resource.Error -> {
                             fragmentMovieBinding.progressBar.visibility = View.GONE
                             Toast.makeText(context,"terjadi kesalahan",Toast.LENGTH_SHORT).show()
                         }
@@ -61,12 +61,12 @@ class MovieFragment : Fragment(), MovieAdapter.OnItemClickCallback {
         }
     }
 
-    override fun onItemClicked(movieEntity: MovieEntity) {
+    override fun onItemClicked(movie: Movie) {
         val intent = Intent(context, DetailActivity::class.java)
-        intent.putExtra(DetailActivity.EXTRA_ID, movieEntity.id)
+        intent.putExtra(DetailActivity.EXTRA_ID, movie.id)
         intent.putExtra(DetailActivity.EXTRA_TYPE, MOVIE)
 
-        Log.d("movie fragment", "intent movie fragment: ${movieEntity.id}")
+        Log.d("movie fragment", "intent movie fragment: ${movie.id}")
         context?.startActivity(intent)
     }
 }

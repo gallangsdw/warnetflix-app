@@ -5,23 +5,21 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.sdwtech.warnetflix.R
-import com.sdwtech.warnetflix.data.source.local.entity.MovieEntity
-import com.sdwtech.warnetflix.data.source.local.entity.TvShowEntity
+import com.sdwtech.warnetflix.core.data.Resource
+import com.sdwtech.warnetflix.core.domain.model.Movie
+import com.sdwtech.warnetflix.core.domain.model.TvShow
 import com.sdwtech.warnetflix.databinding.ActivityDetailBinding
 import com.sdwtech.warnetflix.ui.detail.DetailViewModel.Companion.MOVIE
 import com.sdwtech.warnetflix.ui.detail.DetailViewModel.Companion.TV_SHOW
-import com.sdwtech.warnetflix.viewmodel.ViewModelFactory
-import com.sdwtech.warnetflix.vo.Status
-import java.lang.StringBuilder
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
+    private val detailViewModel: DetailViewModel by viewModel()
     private lateinit var detailBinding: ActivityDetailBinding
-    private lateinit var viewModel: DetailViewModel
     private var type: String? = null
 
     companion object {
@@ -43,9 +41,6 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
         detailBinding.btnFav.setOnClickListener(this)
 
-        val factory = ViewModelFactory.getInstance(this)
-        viewModel = ViewModelProvider(this, factory)[DetailViewModel::class.java]
-
         val extras = intent.extras
 
         val id = extras?.getInt(EXTRA_ID)
@@ -55,24 +50,24 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
         if (type != null) {
             if (id != null) {
-                viewModel.setType(id, type!!)
+                detailViewModel.setType(id, type!!)
             }
             setupState()
 
             if (type == MOVIE) {
-                viewModel.getMovieDetail().observe(this, { movie ->
+                detailViewModel.getMovieDetail().observe(this, { movie ->
                     if (movie != null) {
-                        when (movie.status) {
-                            Status.LOADING -> {
+                        when (movie) {
+                            is Resource.Loading -> {
                                 detailBinding.progressBar.visibility = View.VISIBLE
                             }
-                            Status.SUCCESS ->
+                            is Resource.Success ->
                                 if (movie.data != null) {
                                     detailBinding.progressBar.visibility = View.GONE
                                     detailBinding.overview.visibility = View.VISIBLE
-                                    populateMovie(movie.data)
+                                    populateMovie(movie.data!!)
                                 }
-                            Status.ERROR -> {
+                            is Resource.Error -> {
                                 detailBinding.progressBar.visibility = View.GONE
                                 Toast.makeText(applicationContext, "aduh, ada yang salah ni", Toast.LENGTH_SHORT).show()
                             }
@@ -80,19 +75,19 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 })
             } else if (type == TV_SHOW) {
-                viewModel.getTvShowDetail().observe(this, { tvShow ->
+                detailViewModel.getTvShowDetail().observe(this, { tvShow ->
                     if (tvShow != null) {
-                        when (tvShow.status) {
-                            Status.LOADING -> {
+                        when (tvShow) {
+                            is Resource.Loading -> {
                                 detailBinding.progressBar.visibility = View.VISIBLE
                             }
-                            Status.SUCCESS ->
+                            is Resource.Success ->
                                 if (tvShow.data != null) {
                                     detailBinding.progressBar.visibility = View.GONE
                                     detailBinding.overview.visibility = View.VISIBLE
-                                    populateTvShow(tvShow.data)
+                                    populateTvShow(tvShow.data!!)
                                 }
-                            Status.ERROR -> {
+                            is Resource.Error -> {
                                 detailBinding.progressBar.visibility = View.GONE
                                 Toast.makeText(applicationContext, "aduh, ada yang salah ni", Toast.LENGTH_SHORT).show()
                             }
@@ -113,34 +108,34 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setupState() {
         if (type == MOVIE) {
-            viewModel.getMovieDetail().observe(this, { movie ->
-                when (movie.status) {
-                    Status.LOADING -> detailBinding.progressBar.visibility = View.VISIBLE
-                    Status.SUCCESS -> {
+            detailViewModel.getMovieDetail().observe(this, { movie ->
+                when (movie) {
+                    is Resource.Loading -> detailBinding.progressBar.visibility = View.VISIBLE
+                    is Resource.Success -> {
                         if (movie.data != null) {
                             detailBinding.progressBar.visibility = View.GONE
-                            val state = movie.data.isFavorite
+                            val state = movie.data!!.isFavorite
                             setFavState(state)
                         }
                     }
-                    Status.ERROR -> {
+                    is Resource.Error -> {
                         detailBinding.progressBar.visibility = View.GONE
                         Toast.makeText(applicationContext, "aduh, ada yang salah ni, pasti kamu cowo", Toast.LENGTH_SHORT).show()
                     }
                 }
             })
         } else if (type == TV_SHOW) {
-            viewModel.getTvShowDetail().observe(this, { tvShow ->
-                when (tvShow.status) {
-                    Status.LOADING -> detailBinding.progressBar.visibility = View.VISIBLE
-                    Status.SUCCESS -> {
+            detailViewModel.getTvShowDetail().observe(this, { tvShow ->
+                when (tvShow) {
+                    is Resource.Loading -> detailBinding.progressBar.visibility = View.VISIBLE
+                    is Resource.Success -> {
                         if (tvShow. data != null) {
                             detailBinding.progressBar.visibility = View.GONE
-                            val state = tvShow.data.isFavorite
+                            val state = tvShow.data!!.isFavorite
                             setFavState(state)
                         }
                     }
-                    Status.ERROR -> {
+                    is Resource.Error -> {
                         detailBinding.progressBar.visibility =View.GONE
                         Toast.makeText(applicationContext,"aduh, ada yang salah ni, pasti kamu cowo", Toast.LENGTH_SHORT).show()
                     }
@@ -151,9 +146,9 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun onFavClicked() {
         if (type == MOVIE) {
-            viewModel.setFavoriteMovie()
+            detailViewModel.setFavoriteMovie()
         } else if (type == TV_SHOW) {
-            viewModel.setFavoriteTvShow()
+            detailViewModel.setFavoriteTvShow()
         }
     }
 
@@ -165,7 +160,7 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun populateMovie(movie: MovieEntity) {
+    private fun populateMovie(movie: Movie) {
         val imgTrailer = "https://image.tmdb.org/t/p/w533_and_h300_bestv2"
         val imageUrl = "https://image.tmdb.org/t/p/original"
         detailBinding.tvDetailTitle.text = movie.title
@@ -182,7 +177,7 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
             .into(detailBinding.imgPoster)
     }
 
-    private fun populateTvShow(tvShow: TvShowEntity) {
+    private fun populateTvShow(tvShow: TvShow) {
         val imgTrailer = "https://image.tmdb.org/t/p/w533_and_h300_bestv2"
         val imageUrl = "https://image.tmdb.org/t/p/original"
         detailBinding.tvDetailTitle.text = tvShow.name
