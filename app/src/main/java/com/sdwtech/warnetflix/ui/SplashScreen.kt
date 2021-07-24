@@ -1,9 +1,8 @@
 package com.sdwtech.warnetflix.ui
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.sdwtech.warnetflix.R
+import androidx.appcompat.app.AppCompatActivity
 import com.sdwtech.warnetflix.databinding.ActivitySplashScreenBinding
 import com.sdwtech.warnetflix.ui.home.HomeActivity
 import kotlinx.coroutines.CoroutineScope

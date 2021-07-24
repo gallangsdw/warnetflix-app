@@ -1,9 +1,5 @@
 package com.sdwtech.warnetflix.core.data
 
-import com.sdwtech.warnetflix.core.data.source.local.LocalDataSource
-import com.sdwtech.warnetflix.core.data.source.local.entity.MovieEntity
-import com.sdwtech.warnetflix.core.data.source.local.entity.TvShowEntity
-import com.sdwtech.warnetflix.core.data.source.remote.RemoteDataSource
 import com.sdwtech.warnetflix.core.data.source.remote.network.ApiResponse
 import com.sdwtech.warnetflix.core.data.source.remote.response.movie.DetailMovieResponse
 import com.sdwtech.warnetflix.core.data.source.remote.response.movie.MovieResponse

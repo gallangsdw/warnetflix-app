@@ -1,8 +1,5 @@
 package com.sdwtech.warnetflix.core.data.source.local
 
-import com.sdwtech.warnetflix.core.data.source.local.entity.MovieEntity
-import com.sdwtech.warnetflix.core.data.source.local.entity.TvShowEntity
-import com.sdwtech.warnetflix.core.data.source.local.room.WarnetflixDao
 import kotlinx.coroutines.flow.Flow
 
 class LocalDataSource(private val mWarnetflixDao: com.sdwtech.warnetflix.core.data.source.local.room.WarnetflixDao) {

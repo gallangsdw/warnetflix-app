@@ -1,6 +1,5 @@
 package com.sdwtech.warnetflix.core.domain.usecase
 
-import com.sdwtech.warnetflix.core.data.Resource
 import com.sdwtech.warnetflix.core.domain.model.Movie
 import com.sdwtech.warnetflix.core.domain.model.TvShow
 import com.sdwtech.warnetflix.core.domain.repository.IWarnetflixRepository

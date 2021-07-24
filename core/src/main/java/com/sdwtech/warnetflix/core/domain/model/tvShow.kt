@@ -1,7 +1,5 @@
 package com.sdwtech.warnetflix.core.domain.model
 
-import androidx.room.ColumnInfo
-
 data class TvShow(
         val id: Int = 0,
         val backdropPath: String? = null,

@@ -2,8 +2,6 @@ package com.sdwtech.warnetflix.core.data.source.local.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.sdwtech.warnetflix.core.data.source.local.entity.MovieEntity
-import com.sdwtech.warnetflix.core.data.source.local.entity.TvShowEntity
 
 @Database(entities = [com.sdwtech.warnetflix.core.data.source.local.entity.MovieEntity::class, com.sdwtech.warnetflix.core.data.source.local.entity.TvShowEntity::class],
     version = 1,

@@ -4,6 +4,8 @@ import androidx.room.Room
 import com.sdwtech.warnetflix.core.data.source.remote.network.EndPoint
 import com.sdwtech.warnetflix.core.domain.repository.IWarnetflixRepository
 import com.sdwtech.warnetflix.core.utils.AppExecutors
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -15,10 +17,15 @@ import java.util.concurrent.TimeUnit
 val databaseModule = module {
     factory { get<com.sdwtech.warnetflix.core.data.source.local.room.WarnetflixDatabase>().warnetflixDao() }
     single {
+        val passphrase: ByteArray = SQLiteDatabase.getBytes("sdwtech".toCharArray())
+        val factory = SupportFactory(passphrase)
         Room.databaseBuilder(
             androidContext(),
             com.sdwtech.warnetflix.core.data.source.local.room.WarnetflixDatabase::class.java, "Warnetfilx.db"
-        ).fallbackToDestructiveMigration().allowMainThreadQueries().build()
+        ).fallbackToDestructiveMigration()
+            .allowMainThreadQueries()
+            .openHelperFactory(factory)
+            .build()
     }
 }
 
