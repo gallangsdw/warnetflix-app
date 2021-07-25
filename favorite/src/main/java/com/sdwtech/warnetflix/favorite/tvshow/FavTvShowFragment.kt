@@ -1,5 +1,6 @@
 package com.sdwtech.warnetflix.favorite.tvshow
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -51,6 +52,7 @@ class FavTvShowFragment : Fragment(), FavTvShowAdapter.OnItemClickCallback {
         }
     }
 
+    @SuppressLint("LogConditional")
     override fun onItemClicked(tvShow: TvShow) {
         val intent = Intent(context, DetailActivity::class.java)
         intent.putExtra(DetailActivity.EXTRA_ID, tvShow.id)

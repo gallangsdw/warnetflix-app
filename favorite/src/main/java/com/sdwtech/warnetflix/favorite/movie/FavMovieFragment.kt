@@ -1,5 +1,6 @@
 package com.sdwtech.warnetflix.favorite.movie
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -51,6 +52,7 @@ class FavMovieFragment : Fragment(), FavMovieAdapter.OnItemClickCallBack {
         }
     }
 
+    @SuppressLint("LogConditional")
     override fun onItemClicked(movie: Movie) {
         val intent = Intent(context, DetailActivity::class.java)
         intent.putExtra(DetailActivity.EXTRA_ID, movie.id)
